@@ -1,7 +1,7 @@
 # Личный проект «Кэндишоп» [![Build status][travis-image]][travis-url]
 
 * Студент: [Андрей Васильев](https://up.htmlacademy.ru/javascript/15/user/457551).
-* Наставник: `Неизвестно`.
+* Наставник: `Евгений Лепёшкин`.
 
 ---
 
