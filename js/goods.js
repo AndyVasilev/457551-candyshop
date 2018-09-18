@@ -197,7 +197,7 @@ var renderCandy = function (candy) {
   candyImage.alt = candy.name;
 
   var cardPrice = candyElement.querySelector('.card__price');
-  cardPrice.childNodes[0].textContent = candy.price + ' ';
+  cardPrice.childNodes[0].innerHTML = candy.price + '<span class="card__currency">₽</span>';
   cardPrice.querySelector('.card__weight').textContent = '/ ' + candy.weight + 'Г';
 
   var starsRating = candyElement.querySelector('.stars__rating');
@@ -245,7 +245,7 @@ function renderCandyBasket(candy) {
   var candyImage = basketElement.querySelector('.card-order__img');
   candyImage.src = candy.picture;
   candyImage.alt = candy.name;
-  basketElement.querySelector('.card-order__price').textContent = candy.price + '<span class="card__currency">₽</span>';
+  basketElement.querySelector('.card-order__price').innerHTML = candy.price + '<span class="card__currency"> ₽</span>';
   return basketElement;
 }
 
