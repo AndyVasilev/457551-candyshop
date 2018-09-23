@@ -199,6 +199,7 @@ var renderCandy = function (candy) {
   var cardPrice = candyElement.querySelector('.card__price');
   // var cardCurrency = cardPrice.childNodes[0].innerHTML = '<span class="card__currency">₽</span>';
   cardPrice.childNodes[0].textContent = candy.price;
+  cardPrice.querySelector('.card__currency').textContent = ' ₽';
   cardPrice.querySelector('.card__weight').textContent = '/ ' + candy.weight + 'Г';
 
   var starsRating = candyElement.querySelector('.stars__rating');
@@ -226,22 +227,21 @@ var appendCandy = function () {
 };
 appendCandy();
 
+// Показывает и скрывает состав
+catalogCards.addEventListener('click', function (evt) {
+  evt.preventDefault();
+  var cardMain = evt.target.closest('.card__main');
+  var target = evt.target.closest('.card__btn-composition');
+  var composition = cardMain.querySelector('.card__composition');
+  if (!target) {
+    return;
+  }
+  composition.classList.toggle('card__composition--hidden');
+});
+
 // Корзина
 var basketCards = document.querySelector('.goods__cards');
 var cardEmpty = document.querySelector('.goods__card-empty');
-
-
-var order = document.querySelector('.order');
-var inputs = order.querySelectorAll('input');
-// Добавляет и убирает атрибут disabled на инпуты
-var addDisabledForInput = function () {
-  var article = document.querySelector('.goods_card');
-  for (var i = 0; i < inputs.length; i++) {
-    inputs[i].disabled = (article === null);
-  }
-};
-
-addDisabledForInput();
 
 // Выводит и убирает сообщение о наличии товара в корзине
 var alertMessage = function () {
@@ -258,7 +258,6 @@ var createAddToBasketHandler = function (i) {
     addToBasket(cardsOnCatalog[i], i);
     evt.preventDefault();
     alertMessage();
-    addDisabledForInput();
   };
 };
 
@@ -271,6 +270,23 @@ var addBasketAdditionHandlers = function () {
 
 addBasketAdditionHandlers();
 
+var changeMainBasketHeader = function () {
+  var mainBasketHeaderElement = document.querySelector('.main-header__basket');
+  for (var i = 0; i < cardsOnCatalog.length; i++) {
+
+    // cardsOnCatalog[i].setAttribute('data-id', i + 1);
+    mainBasketHeaderElement.textContent = 'В корзине ' + candyGoods[i].price + ' товаров на сумму ' + 100 + ' ₽';
+  }
+};
+
+// if () {
+//   mainBasketHeaderElement.textContent = 'В корзине ' + 1 + ' товаров на сумму ' + 100 + ' ₽';
+// } else {
+//   mainBasketHeaderElement.textContent = 'В корзине ничего нет';
+// }
+
+changeMainBasketHeader();
+
 // Удаляет товары из корзины
 basketCards.addEventListener('click', function (evt) {
   evt.preventDefault();
@@ -281,7 +297,6 @@ basketCards.addEventListener('click', function (evt) {
   var targetCard = evt.target.closest('.card-order');
   basketCards.removeChild(targetCard);
   alertMessage();
-  addDisabledForInput();
 });
 
 // Увеличивает значение
@@ -315,7 +330,6 @@ basketCards.addEventListener('click', function (evt) {
     var targetCard = evt.target.closest('.card-order');
     basketCards.removeChild(targetCard);
     alertMessage();
-    addDisabledForInput();
   }
 });
 
@@ -327,10 +341,13 @@ var addDataAtribute = function () {
 };
 addDataAtribute();
 
+
 var addToBasket = function (target, i) {
   var dataAttribute = basketCards.querySelector('[data-id="' + target.dataset.id + '"]');
   if (dataAttribute === null) {
     var cardsBasket = candyGoods[i];
+    // var mainBasketHeaderElement = document.querySelector('.main-header__basket');
+    // mainBasketHeaderElement.textContent = 'В корзине ' + 1 + ' товаров на сумму ' + cardsBasket.price + ' ₽';
     var cardBasketElement = document.querySelector('#card-order').content.cloneNode(true);
     cardBasketElement.querySelector('.card-order__title').textContent = cardsBasket.name;
     cardBasketElement.querySelector('.card-order__img').src = cardsBasket.picture;
@@ -339,6 +356,7 @@ var addToBasket = function (target, i) {
     cardBasketElement.querySelector('.goods_card').setAttribute('data-id', i + 1);
     basketCards.appendChild(cardBasketElement);
   } else {
+    // mainBasketHeaderElement.textContent = 'В корзине ничего нет';
     var value = dataAttribute.querySelector('.card-order__count');
     increaseValue(value);
   }
@@ -357,3 +375,70 @@ var btnFavoriteHandler = function (evt) {
 for (var j = 0; j < favoriteBtn.length; j++) {
   favoriteBtn[j].addEventListener('click', btnFavoriteHandler);
 }
+
+// Показывает и скрывает форму оплаты
+
+var payment = document.querySelector('.payment');
+var paymentCard = payment.querySelector('.payment__card-wrap');
+var paymentCash = payment.querySelector('.payment__cash-wrap');
+var btnCard = payment.querySelector('input#payment__card');
+var btnCash = payment.querySelector('input#payment__cash');
+var paymentInputs = payment.querySelector('.payment__inputs');
+
+
+btnCash.addEventListener('click', function () {
+  addClassForPayment();
+});
+
+btnCard.addEventListener('click', function () {
+  addClassForPayment();
+});
+
+var addClassForPayment = function () {
+  paymentCash.classList.toggle('visually-hidden', btnCard.checked === true);
+  paymentCard.classList.toggle('visually-hidden', btnCash.checked === true);
+  addDisabledForInputPayment();
+};
+
+
+var inputsPayment = paymentInputs.querySelectorAll('input');
+
+// Добавляет и убирает атрибут disabled на инпуты
+var addDisabledForInputPayment = function () {
+  for (var i = 0; i < inputsPayment.length; i++) {
+    inputsPayment[i].disabled = btnCash.checked === true;
+  }
+};
+
+// Переключает вкладки в блоке доставки
+
+var delivery = document.querySelector('.deliver');
+var store = delivery.querySelector('.deliver__store');
+var courier = delivery.querySelector('.deliver__courier');
+var btnStore = delivery.querySelector('input#deliver__store');
+var btnCourier = delivery.querySelector('input#deliver__courier');
+var fieldsetStore = store.querySelector('.deliver__stores');
+var fieldsetCourier = courier.querySelector('.deliver__entry-fields-wrap');
+
+
+btnStore.addEventListener('click', function () {
+  addClassForDelivery();
+});
+
+btnCourier.addEventListener('click', function () {
+  addClassForDelivery();
+});
+
+var addClassForDelivery = function () {
+  courier.classList.toggle('visually-hidden', btnStore.checked === true);
+  store.classList.toggle('visually-hidden', btnCourier.checked === true);
+  addDisabledForFieldsetDelivery();
+};
+
+// Добавляет и убирает атрибут disabled на инпуты в блоке доставки
+var addDisabledForFieldsetDelivery = function () {
+  fieldsetCourier.disabled = btnCourier.checked === false;
+  fieldsetStore.disabled = btnCourier.checked === true;
+};
+
+addDisabledForFieldsetDelivery();
