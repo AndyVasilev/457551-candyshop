@@ -257,7 +257,47 @@ var createAddToBasketHandler = function (i) {
     addToBasket(cardsOnCatalog[i], i);
     evt.preventDefault();
     alertMessage();
+    changeMainBasketHeader();
   };
+};
+
+var basketHeaderTitle = function (num, expressions) {
+  var result;
+  var count = num % 100;
+  if (count >= 5 && count <= 20) {
+    result = expressions['2'];
+  } else {
+    count = count % 10;
+    if (count === 1) {
+      result = expressions['0'];
+    } else if (count >= 2 && count <= 4) {
+      result = expressions['1'];
+    } else {
+      result = expressions['2'];
+    }
+  }
+  return result;
+};
+
+var changeMainBasketHeader = function () {
+  var mainBasketHeaderElement = document.querySelector('.main-header__basket');
+  var orderCards = document.querySelectorAll('.card-order');
+  var orderLength = orderCards.length;
+
+  var fullCount = 0;
+  var fullPrice = 0;
+
+  if (orderLength > 0) {
+    for (var i = 0; i < orderLength; i++) {
+      var orderCardElement = orderCards[i];
+      fullCount += +orderCardElement.getAttribute('data-count');
+      fullPrice += +orderCardElement.getAttribute('data-count') * +orderCardElement.getAttribute('data-price');
+    }
+    mainBasketHeaderElement.innerHTML = 'В корзине ' + fullCount + basketHeaderTitle(fullCount, [' товар', ' товара', ' товаров']) + ' на сумму ' + fullPrice + ' ₽';
+  } else {
+    mainBasketHeaderElement.innerHTML = 'В корзине ничего нет';
+  }
+  console.log(fullCount, fullPrice);
 };
 
 // Добавляет товары в корзину при клике на кнопку добавить
@@ -279,6 +319,7 @@ basketCards.addEventListener('click', function (evt) {
   var targetCard = evt.target.closest('.card-order');
   basketCards.removeChild(targetCard);
   alertMessage();
+  changeMainBasketHeader();
 });
 
 // Увеличивает значение
@@ -342,38 +383,6 @@ var addToBasket = function (target, i) {
     dataAttribute.setAttribute('data-count', increaseValue(value));
   }
 };
-
-
-// счетчик на количество товаров
-// var basketHeaderTitle = function (num, expressions) {
-//   var result;
-//   var count = num % 100;
-//   if (count >= 5 && count <= 20) {
-//     result = expressions['2'];
-//   } else {
-//     count = count % 10;
-//     if (count === 1) {
-//       result = expressions['0'];
-//     } else if (count >= 2 && count <= 4) {
-//       result = expressions['1'];
-//     } else {
-//       result = expressions['2'];
-//     }
-//   }
-//   return result;
-// };
-
-var changeMainBasketHeader = function (target, i) {
-  var mainBasketHeaderElement = document.querySelector('.main-header__basket');
-  var headerBasket = candyGoods[i];
-  if (headerBasket.length > 0) {
-    mainBasketHeaderElement.innerHTML = 'В корзине что-то есть';
-  } else {
-    mainBasketHeaderElement.innerHTML = 'В корзине ничего нет';
-  }
-};
-
-changeMainBasketHeader();
 
 
 // Добавление в Избранное
