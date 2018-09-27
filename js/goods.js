@@ -197,7 +197,6 @@ var renderCandy = function (candy) {
   candyImage.alt = candy.name;
 
   var cardPrice = candyElement.querySelector('.card__price');
-  // var cardCurrency = cardPrice.childNodes[0].innerHTML = '<span class="card__currency">₽</span>';
   cardPrice.childNodes[0].textContent = candy.price;
   cardPrice.querySelector('.card__currency').textContent = ' ₽';
   cardPrice.querySelector('.card__weight').textContent = '/ ' + candy.weight + 'Г';
@@ -270,23 +269,6 @@ var addBasketAdditionHandlers = function () {
 
 addBasketAdditionHandlers();
 
-var changeMainBasketHeader = function () {
-  var mainBasketHeaderElement = document.querySelector('.main-header__basket');
-  for (var i = 0; i < cardsOnCatalog.length; i++) {
-
-    // cardsOnCatalog[i].setAttribute('data-id', i + 1);
-    mainBasketHeaderElement.textContent = 'В корзине ' + candyGoods[i].price + ' товаров на сумму ' + 100 + ' ₽';
-  }
-};
-
-// if () {
-//   mainBasketHeaderElement.textContent = 'В корзине ' + 1 + ' товаров на сумму ' + 100 + ' ₽';
-// } else {
-//   mainBasketHeaderElement.textContent = 'В корзине ничего нет';
-// }
-
-changeMainBasketHeader();
-
 // Удаляет товары из корзины
 basketCards.addEventListener('click', function (evt) {
   evt.preventDefault();
@@ -301,7 +283,7 @@ basketCards.addEventListener('click', function (evt) {
 
 // Увеличивает значение
 var increaseValue = function (value) {
-  value.value++;
+  return ++value.value;
 };
 
 // Увеличивает кол-во товаров в корзине
@@ -346,21 +328,52 @@ var addToBasket = function (target, i) {
   var dataAttribute = basketCards.querySelector('[data-id="' + target.dataset.id + '"]');
   if (dataAttribute === null) {
     var cardsBasket = candyGoods[i];
-    // var mainBasketHeaderElement = document.querySelector('.main-header__basket');
-    // mainBasketHeaderElement.textContent = 'В корзине ' + 1 + ' товаров на сумму ' + cardsBasket.price + ' ₽';
     var cardBasketElement = document.querySelector('#card-order').content.cloneNode(true);
     cardBasketElement.querySelector('.card-order__title').textContent = cardsBasket.name;
     cardBasketElement.querySelector('.card-order__img').src = cardsBasket.picture;
     cardBasketElement.querySelector('.card-order__price').textContent = cardsBasket.price + ' ₽';
     cardBasketElement.querySelector('.card-order__count').setAttribute('value', 1);
     cardBasketElement.querySelector('.goods_card').setAttribute('data-id', i + 1);
+    cardBasketElement.querySelector('.goods_card').setAttribute('data-price', cardsBasket.price);
+    cardBasketElement.querySelector('.goods_card').setAttribute('data-count', 1);
     basketCards.appendChild(cardBasketElement);
   } else {
-    // mainBasketHeaderElement.textContent = 'В корзине ничего нет';
     var value = dataAttribute.querySelector('.card-order__count');
-    increaseValue(value);
+    dataAttribute.setAttribute('data-count', increaseValue(value));
   }
 };
+
+
+// счетчик на количество товаров
+// var basketHeaderTitle = function (num, expressions) {
+//   var result;
+//   var count = num % 100;
+//   if (count >= 5 && count <= 20) {
+//     result = expressions['2'];
+//   } else {
+//     count = count % 10;
+//     if (count === 1) {
+//       result = expressions['0'];
+//     } else if (count >= 2 && count <= 4) {
+//       result = expressions['1'];
+//     } else {
+//       result = expressions['2'];
+//     }
+//   }
+//   return result;
+// };
+
+var changeMainBasketHeader = function (target, i) {
+  var mainBasketHeaderElement = document.querySelector('.main-header__basket');
+  var headerBasket = candyGoods[i];
+  if (headerBasket.length > 0) {
+    mainBasketHeaderElement.innerHTML = 'В корзине что-то есть';
+  } else {
+    mainBasketHeaderElement.innerHTML = 'В корзине ничего нет';
+  }
+};
+
+changeMainBasketHeader();
 
 
 // Добавление в Избранное
