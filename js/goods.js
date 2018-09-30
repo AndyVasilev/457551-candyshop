@@ -172,8 +172,6 @@ var makeRandomGoods = function () {
 
 makeRandomGoods();
 
-/**********************************************************************************/
-
 var catalogCards = document.querySelector('.catalog__cards');
 catalogCards.classList.remove('catalog__cards--load');
 catalogCards.querySelector('.catalog__load').classList.add('visually-hidden');
@@ -183,7 +181,6 @@ var cardTamplate = document.querySelector('#card').content.querySelector('.catal
 
 // Корзина
 var basketCards = document.querySelector('.goods__cards');
-var cardEmpty = document.querySelector('.goods__card-empty');
 
 var basketCount = function () {
   var countObject = {
@@ -253,19 +250,49 @@ var renderBasket = function (candy) {
     renderBasketGoods();
     if (basketGoods.length === 0) {
       basketCards.innerHTML = '<div class="goods__card-empty"><p><b>Странно, ты ещё ничего не добавил.</b></p><p>У нас столько всего вкусного и необычного, обязательно попробуй.</p></div>';
-      // cardEmpty.classList.remove('visually-hidden');
     }
   });
 
   // обработку кнопок +/-
+
+  var increaseButton = cardBasketElement.querySelector('.card-order__btn--increase');
+  var decreaseButton = cardBasketElement.querySelector('.card-order__btn--decrease');
+
+  increaseButton.addEventListener('click', function (evt) {
+    // увеличивает количество товаров в корзине
+    evt.preventDefault();
+
+    for (var j = 0; j < basketGoods.length; j++) {
+      if (basketGoods[j].count < basketGoods[j].amount) {
+        basketGoods[j].count += 1;
+      }
+    }
+    renderBasketGoods();
+  });
+
+  decreaseButton.addEventListener('click', function (evt) {
+    // уменьшает количество товаров в корзине
+    evt.preventDefault();
+
+    for (var j = 0; j < basketGoods.length; j++) {
+      if (basketGoods[j].count <= basketGoods[j].amount) {
+        basketGoods[j].count -= 1;
+      }
+    }
+    renderBasketGoods();
+    for (var a = 0; a < basketGoods.length; a++) {
+      if (basketGoods[a].count === 0) {
+        basketGoods.splice(candyGoods.indexOf(1), 1);
+        basketCards.innerHTML = '<div class="goods__card-empty"><p><b>Странно, ты ещё ничего не добавил.</b></p><p>У нас столько всего вкусного и необычного, обязательно попробуй.</p></div>';
+      }
+    }
+  });
 
   basketCards.appendChild(cardBasketElement);
 };
 
 var renderBasketGoods = function () {
   basketCards.innerHTML = '';
-  // cardEmpty.classList.add('visually-hidden');
-
   for (var i = 0; i < basketGoods.length; i++) {
     renderBasket(basketGoods[i]);
   }
@@ -346,10 +373,10 @@ var renderCandy = function (candy) {
       if (basketGoods[i].count < basketGoods[i].amount) {
         basketGoods[i].count += 1;
       } else {
-        // дизейблим кнопку
+        candyElement.classList.remove('card--in-stock');
+        candyElement.classList.add('card--soon');
       }
     }
-
     renderBasketGoods();
   });
 
@@ -366,63 +393,6 @@ var appendCandy = function () {
   catalogCards.appendChild(fragment);
 };
 appendCandy();
-
-/*******************************************************************************/
-
-// var cardsOnCatalog = catalogCards.querySelectorAll('.catalog__card');
-//
-// // Удаляет товары из корзины
-// basketCards.addEventListener('click', function (evt) {
-//   evt.preventDefault();
-//   var target = evt.target.closest('.card-order__close');
-//   if (target === null) {
-//     return;
-//   }
-//   var targetCard = evt.target.closest('.card-order');
-//   basketCards.removeChild(targetCard);
-//   changeMainBasketHeader();
-// });
-//
-// // Увеличивает значение
-// var increaseValue = function (value) {
-//   return ++value.value;
-// };
-//
-// // Увеличивает кол-во товаров в корзине
-// basketCards.addEventListener('click', function (evt) {
-//   evt.preventDefault();
-//   var target = evt.target.closest('.card-order__btn--increase');
-//   var card = evt.target.closest('.card-order__amount');
-//   var value = card.querySelector('.card-order__count');
-//   if (target === null) {
-//     return;
-//   }
-//   increaseValue(value);
-// });
-//
-// // Уменьшает кол-во товаров в корзине
-// basketCards.addEventListener('click', function (evt) {
-//   evt.preventDefault();
-//   var target = evt.target.closest('.card-order__btn--decrease');
-//   var card = evt.target.closest('.card-order__amount');
-//   var value = card.querySelector('.card-order__count');
-//   if (target === null) {
-//     return;
-//   } else if (value.value > 1) {
-//     value.value--;
-//   } else {
-//     var targetCard = evt.target.closest('.card-order');
-//     basketCards.removeChild(targetCard);
-//   }
-// });
-//
-// // Добавляет дата атрибуты
-// var addDataAtribute = function () {
-//   for (var i = 0; i < cardsOnCatalog.length; i++) {
-//     cardsOnCatalog[i].setAttribute('data-id', i + 1);
-//   }
-// };
-// addDataAtribute();
 
 // Показывает и скрывает форму оплаты
 
