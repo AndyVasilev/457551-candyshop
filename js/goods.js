@@ -224,7 +224,7 @@ var changeMainBasketHeader = function () {
   }
 };
 
-var renderBasket = function (candy) {
+var renderBasket = function (candy, basketIndex) {
   var cardBasketElement = document.querySelector('#card-order').content.cloneNode(true);
   var index = null;
 
@@ -242,22 +242,11 @@ var renderBasket = function (candy) {
 
   var closeButton = cardBasketElement.querySelector('.card-order__close');
 
-  var getCurrentCartObj = function (objName) {
-    for (var q = 0; q < candyGoods.length; q++) {
-      if (candyGoods[index].name === objName) {
-        var currentCartObj = candyGoods[q];
-      }
-    }
-    return currentCartObj;
-  };
-
   closeButton.addEventListener('click', function (evt) {
     // удалить элемент из массива basketGoods
     evt.preventDefault();
-    var indexCurrentObj = basketGoods.indexOf(getCurrentCartObj(candyGoods[index].name));
-    basketGoods.splice(indexCurrentObj, 1);
+    basketGoods.splice(basketIndex, 1);
 
-    //
     renderBasketGoods();
     if (basketGoods.length === 0) {
       basketCards.innerHTML = '<div class="goods__card-empty"><p><b>Странно, ты ещё ничего не добавил.</b></p><p>У нас столько всего вкусного и необычного, обязательно попробуй.</p></div>';
@@ -269,16 +258,11 @@ var renderBasket = function (candy) {
   var increaseButton = cardBasketElement.querySelector('.card-order__btn--increase');
   var decreaseButton = cardBasketElement.querySelector('.card-order__btn--decrease');
 
-  var candyId = candyGoods[index].name + '_' + candy.amount;
-
   increaseButton.addEventListener('click', function (evt) {
     // увеличивает количество товаров в корзине
     evt.preventDefault();
-
-    for (var j = 0; j < basketGoods.length; j++) {
-      if (basketGoods[j].id === candyId && basketGoods[j].count < basketGoods[j].amount) {
-        basketGoods[j].count += 1;
-      }
+    if (basketGoods[basketIndex].count < basketGoods[basketIndex].amount) {
+      basketGoods[basketIndex].count += 1;
     }
 
     renderBasketGoods();
@@ -287,27 +271,14 @@ var renderBasket = function (candy) {
   decreaseButton.addEventListener('click', function (evt) {
     // уменьшает количество товаров в корзине
     evt.preventDefault();
-
-
-    for (var j = 0; j < basketGoods.length; j++) {
-      if (basketGoods[j].id === candyId && basketGoods[j].count <= basketGoods[j].amount) {
-        basketGoods[j].count -= 1;
-      } if (basketGoods[j].id === candyId && basketGoods[j].count === 0) {
-        // console.log(basketGoods[j].count);
-        console.log(basketGoods);
-        console.log(candyGoods[j]);
-        basketGoods.splice(candyGoods[j]);
-      }
+    basketGoods[basketIndex].count -= 1;
+    if (basketGoods[basketIndex].count === 0) {
+      basketGoods.splice(basketIndex, 1);
     }
-    // renderBasketGoods();
-    // for (var a = 0; a < basketGoods.length; a++) {
-    //
-    //   if (basketGoods[a].id === candyId && basketGoods[a].count === 0) {
-    //     basketGoods.splice(candyGoods.indexOf(1), 1);
-    //     // basketCards.innerHTML = '<div class="goods__card-empty"><p><b>Странно, ты ещё ничего не добавил.</b></p><p>У нас столько всего вкусного и необычного, обязательно попробуй.</p></div>';
-    //   }
-    // }
     renderBasketGoods();
+    if (basketGoods.length === 0) {
+      basketCards.innerHTML = '<div class="goods__card-empty"><p><b>Странно, ты ещё ничего не добавил.</b></p><p>У нас столько всего вкусного и необычного, обязательно попробуй.</p></div>';
+    }
   });
 
   basketCards.appendChild(cardBasketElement);
@@ -316,7 +287,7 @@ var renderBasket = function (candy) {
 var renderBasketGoods = function () {
   basketCards.innerHTML = '';
   for (var i = 0; i < basketGoods.length; i++) {
-    renderBasket(basketGoods[i]);
+    renderBasket(basketGoods[i], i);
   }
 
   changeMainBasketHeader();
