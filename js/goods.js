@@ -225,6 +225,26 @@ var changeMainBasketHeader = function () {
   }
 };
 
+// ---
+
+var order = document.querySelector('.order');
+var inputs = order.querySelectorAll('input');
+var buy = document.querySelector('.buy');
+var formBuy = buy.querySelector('form');
+var btnFormBuy = formBuy.querySelector('.buy__submit-btn');
+
+
+var addDisabledForInput = function () {
+  for (var i = 0; i < inputs.length; i++) {
+    inputs[i].disabled = (basketGoods.length === 0);
+  }
+  btnFormBuy.disabled = (basketGoods.length === 0);
+};
+
+addDisabledForInput();
+
+// ---
+
 var renderBasket = function (candy, basketIndex) {
   var cardBasketElement = document.querySelector('#card-order').content.cloneNode(true);
   var index = null;
@@ -290,8 +310,8 @@ var renderBasketGoods = function () {
   for (var i = 0; i < basketGoods.length; i++) {
     renderBasket(basketGoods[i], i);
   }
-
   changeMainBasketHeader();
+  addDisabledForInput();
 };
 
 // Заполнение шаблона
@@ -389,25 +409,7 @@ var appendCandy = function () {
 appendCandy();
 
 
-// ----------------------------
-
-var order = document.querySelector('.order');
-var inputs = order.querySelectorAll('input');
-var buy = document.querySelector('.buy');
-var formBuy = buy.querySelector('form');
-var btnFormBuy = formBuy.querySelector('.buy__submit-btn');
-
-// Добавляет и убирает атрибут disabled на инпуты
-var addDisabledForInput = function () {
-  var article = document.querySelector('.goods_card');
-  for (var i = 0; i < inputs.length; i++) {
-    inputs[i].disabled = (!article === null);
-  }
-  btnFormBuy.disabled = (!article === null);
-};
-
-addDisabledForInput();
-
+// ---- task 2 module 4
 
 // Показывает и скрывает форму оплаты
 
@@ -428,8 +430,8 @@ btnCard.addEventListener('click', function () {
 });
 
 var addClassForPayment = function () {
-  paymentCash.classList.toggle('visually-hidden', btnCard.checked === true);
-  paymentCard.classList.toggle('visually-hidden', btnCash.checked === true);
+  paymentCash.classList.toggle('visually-hidden', btnCard.checked);
+  paymentCard.classList.toggle('visually-hidden', btnCash.checked);
   addDisabledForInputPayment();
 };
 
@@ -439,7 +441,7 @@ var inputsPayment = paymentInputs.querySelectorAll('input');
 // Добавляет и убирает атрибут disabled на инпуты
 var addDisabledForInputPayment = function () {
   for (var i = 0; i < inputsPayment.length; i++) {
-    inputsPayment[i].disabled = btnCash.checked === true;
+    inputsPayment[i].disabled = btnCash.checked;
   }
 };
 
@@ -463,20 +465,18 @@ btnCourier.addEventListener('click', function () {
 });
 
 var addClassForDelivery = function () {
-  courier.classList.toggle('visually-hidden', btnStore.checked === true);
-  store.classList.toggle('visually-hidden', btnCourier.checked === true);
+  courier.classList.toggle('visually-hidden', btnStore.checked);
+  store.classList.toggle('visually-hidden', btnCourier.checked);
   addDisabledForFieldsetDelivery();
 };
 
 // Добавляет и убирает атрибут disabled на инпуты в блоке доставки
 var addDisabledForFieldsetDelivery = function () {
-  fieldsetCourier.disabled = btnCourier.checked === false;
-  fieldsetStore.disabled = btnCourier.checked === true;
+  fieldsetCourier.disabled = !btnCourier.checked;
+  fieldsetStore.disabled = btnCourier.checked;
 };
 
 addDisabledForFieldsetDelivery();
-
-// -------- task 2 module 4 -------- //
 
 var modalSuccess = document.querySelector('.modal--success');
 var modalError = document.querySelector('.modal--error');
